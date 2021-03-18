@@ -40,29 +40,6 @@ roomsRouter.post('/create', async (request, response, next) => {
 });
 
 /**
- * Get a specific room by its SID (unique identifier)
- *
- * (You can also get rooms by name, but this only works for in-progress rooms.)
- */
-
-roomsRouter.get('/:sid', async (request, response, next) => {
-  const sid: string = request.params.sid;
-
-  try {
-    // Call the Twilio video API to retrieve the room you created
-    let room = await twilioClient.video.rooms(sid).fetch();
-
-    return response.status(200).send({room});
-
-  } catch (error) {
-    return response.status(400).send({
-      message: `Unable to get room with sid=${sid}`,
-      error
-    });
-  }
-});
-
-/**
 * List active rooms
 * (You can also select other ways to filter/list! For the purposes of this tutorial though, just the in-progress rooms will be returned.)
 */
@@ -94,6 +71,29 @@ roomsRouter.get('/', async (request, response, next) => {
   } catch (error) {
     return response.status(400).send({
       message: `Unable to list active rooms`,
+      error
+    });
+  }
+});
+
+/**
+ * Get a specific room by its SID (unique identifier)
+ *
+ * (You can also get rooms by name, but this only works for in-progress rooms.)
+ */
+
+roomsRouter.get('/:sid', async (request, response, next) => {
+  const sid: string = request.params.sid;
+
+  try {
+    // Call the Twilio video API to retrieve the room you created
+    let room = await twilioClient.video.rooms(sid).fetch();
+
+    return response.status(200).send({room});
+
+  } catch (error) {
+    return response.status(400).send({
+      message: `Unable to get room with sid=${sid}`,
       error
     });
   }
