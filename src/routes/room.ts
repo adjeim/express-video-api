@@ -28,11 +28,11 @@ roomsRouter.post('/create', async (request, response, next) => {
       });
 
       // Return the room details in the response
-      response.status(200).send(room)
+      return response.status(200).send(room)
 
   } catch (error) {
     // If something went wrong, handle the error
-    response.status(400).send({
+    return response.status(400).send({
       message: `Unable to create new room with name=${roomName}`,
       error
     });
@@ -52,10 +52,10 @@ roomsRouter.get('/:sid', async (request, response, next) => {
     // Call the Twilio video API to retrieve the room you created
     let room = await twilioClient.video.rooms(sid).fetch();
 
-    response.status(200).send({room});
+    return response.status(200).send({room});
 
   } catch (error) {
-    response.status(400).send({
+    return response.status(400).send({
       message: `Unable to get room with sid=${sid}`,
       error
     });
@@ -73,7 +73,7 @@ roomsRouter.get('/', async (request, response, next) => {
 
     // If there are no in-progress rooms, return this message response early
     if (!rooms.length) {
-      response.status(200).send({message: 'No active rooms found'});
+      return response.status(200).send({message: 'No active rooms found'});
     }
 
     // If there are active rooms, create a new array of `Room` objects that will hold this list
@@ -88,11 +88,11 @@ roomsRouter.get('/', async (request, response, next) => {
 
       activeRooms.push(roomData);
 
-      response.status(200).send({activeRooms});
+      return response.status(200).send({activeRooms});
     });
 
   } catch (error) {
-    response.status(400).send({
+    return response.status(400).send({
       message: `Unable to list active rooms`,
       error
     });
@@ -118,10 +118,10 @@ roomsRouter.post('/complete/:sid', async (request, response, next) => {
       name: room.uniqueName,
     }
 
-    response.send({closedRoom});
+    return response.status(200).send({closedRoom});
 
   } catch (error) {
-    response.status(400).send({
+    return response.status(400).send({
       message: `Unable to complete room with sid=${sid}`,
       error
     });
