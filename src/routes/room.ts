@@ -64,9 +64,9 @@ roomsRouter.get('/', async (request, response, next) => {
       }
 
       activeRooms.push(roomData);
-
-      return response.status(200).send({activeRooms});
     });
+
+    return response.status(200).send({activeRooms});
 
   } catch (error) {
     return response.status(400).send({
