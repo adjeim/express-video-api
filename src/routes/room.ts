@@ -12,26 +12,27 @@ const twilioClient = twilio(config.TWILIO_ACCOUNT_SID, config.TWILIO_AUTH_TOKEN)
 
 
 /**
- * Create a new room
+ * Create a new video room
  */
 
 roomsRouter.post('/create', async (request, response, next) => {
 
-  // Get the room name from the request body. If a room name wasn’t included in the request, default to an empty string to avoid throwing errors
+  // Get the room name from the request body.
+  // If a roomName was not included in the request, default to an empty string to avoid throwing errors.
   const roomName: string = request.body.roomName || '';
 
   try {
-    // Call the Twilio video API to create the new room
-    let room = await twilioClient.video.rooms.create({
+    // Call the Twilio video API to create the new room.
+    const room = await twilioClient.video.rooms.create({
         uniqueName: roomName,
         type: 'group'
       });
 
-      // Return the room details in the response
-      return response.status(200).send(room)
+    // Return the room details in the response.
+    return response.status(200).send(room)
 
   } catch (error) {
-    // If something went wrong, handle the error
+    // If something went wrong, handle the error.
     return response.status(400).send({
       message: `Unable to create new room with name=${roomName}`,
       error
@@ -40,23 +41,25 @@ roomsRouter.post('/create', async (request, response, next) => {
 });
 
 /**
-* List active rooms
-* (You can also select other ways to filter/list! For the purposes of this tutorial though, just the in-progress rooms will be returned.)
+* List active video rooms
+*
+* You can also select other ways to filter/list!
+* For the purposes of this tutorial, though, only the in-progress rooms are returned.
 */
 roomsRouter.get('/', async (request, response, next) => {
   try {
-    // Get the last 20 rooms that are still currently in progress
-    let rooms = await twilioClient.video.rooms.list({status: 'in-progress', limit: 20});
+    // Get the last 20 rooms that are still currently in progress.
+    const rooms = await twilioClient.video.rooms.list({status: 'in-progress', limit: 20});
 
-    // If there are no in-progress rooms, return this message response early
+    // If there are no in-progress rooms, return a response that no active rooms were found.
     if (!rooms.length) {
       return response.status(200).send({message: 'No active rooms found'});
     }
 
-    // If there are active rooms, create a new array of `Room` objects that will hold this list
+    // If there are active rooms, create a new array of `Room` objects that will hold this list.
     let activeRooms: Room[] = [];
 
-    // Then for each room, take only the data you need and push it into the activeRooms array
+    // Then, for each room, take only the data you need and push it into the `activeRooms` array.
     rooms.forEach((room) => {
       const roomData: Room = {
         sid: room.sid,
@@ -79,7 +82,8 @@ roomsRouter.get('/', async (request, response, next) => {
 /**
  * Get a specific room by its SID (unique identifier)
  *
- * (You can also get rooms by name, but this only works for in-progress rooms.)
+ * It is also possible to get rooms by name, but this only works for in-progress rooms.
+ * You can use this endpoint to get rooms of any status!
  */
 
 roomsRouter.get('/:sid', async (request, response, next) => {
@@ -87,7 +91,7 @@ roomsRouter.get('/:sid', async (request, response, next) => {
 
   try {
     // Call the Twilio video API to retrieve the room you created
-    let room = await twilioClient.video.rooms(sid).fetch();
+    const room = await twilioClient.video.rooms(sid).fetch();
 
     return response.status(200).send({room});
 
@@ -100,19 +104,21 @@ roomsRouter.get('/:sid', async (request, response, next) => {
 });
 
 /**
-* Complete a room (updates the status to "completed" with a request to end the room and disconnect the participants)
-* This does not delete the room; it only updates the room’s status.
+* Complete a room
+*
+* This will update the room's status to `completed` and will end the video chat, disconnecting any participants.
+* The room will not be deleted, but it will no longer appear in the list of in-progress rooms.
 */
 
-roomsRouter.post('/complete/:sid', async (request, response, next) => {
-  // Get the SID from the request parameters
+roomsRouter.post('/:sid/complete', async (request, response, next) => {
+  // Get the SID from the request parameters.
   const sid: string = request.params.sid;
 
   try {
-    // Update the status from ‘in-progress’ to ‘completed’
-    let room = await twilioClient.video.rooms(sid).update({status: 'completed'})
+    // Update the status from ‘in-progress’ to ‘completed’.
+    const room = await twilioClient.video.rooms(sid).update({status: 'completed'})
 
-    // Return the details about which room was closed, as a Room object
+    // Create a `Room` object with the details about the closed room.
     const closedRoom: Room = {
       sid: room.sid,
       name: room.uniqueName,
