@@ -8,6 +8,6 @@ app.use(express.json());
 // Forward requests for the /rooms URI to our rooms router
 app.use('/rooms', roomsRouter);
 
-app.listen(3000, () => {
-  console.log('Express server listening on port 3000');
+app.listen(5000, () => {
+  console.log('Express server listening on port 5000');
 });
