@@ -53,7 +53,10 @@ roomsRouter.get('/', async (request, response, next) => {
 
     // If there are no in-progress rooms, return a response that no active rooms were found.
     if (!rooms.length) {
-      return response.status(200).send({message: 'No active rooms found'});
+      return response.status(200).send({
+        message: 'No active rooms found',
+        activeRooms: [],
+      });
     }
 
     // If there are active rooms, create a new array of `Room` objects that will hold this list.
