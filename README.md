@@ -15,5 +15,5 @@ This is an API for programmatically creating and managing video rooms using Twil
   > express-video-api@1.0.0 start
   > node-dev src/index.ts
 
-  Express server listening on port 3000
+  Express server listening on port 5000
   ```
