@@ -1,6 +1,5 @@
-import config from '../config';
 import { Router } from 'express';
-import twilio from 'twilio';
+import { twilioClient } from '../index';
 
 interface Room {
   name: string;
@@ -8,8 +7,6 @@ interface Room {
 }
 
 const roomsRouter = Router();
-const twilioClient = twilio(config.TWILIO_ACCOUNT_SID, config.TWILIO_AUTH_TOKEN);
-
 
 /**
  * Create a new video room
