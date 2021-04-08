@@ -16,8 +16,9 @@ const MAXIMUM_SESSION_DURATION = 14400;
  */
 authRouter.post('/token', async (request, response, next) => {
 
-  // Get the username and roomName from the request
-  const username: string  = request.body.username;
+  // Get the userId and roomName from the request.
+  const userId: string  = request.body.userId;
+  console.log(request.body)
   const roomSid: string = request.body.roomSid;
 
   // Handle case where environment variables could be missing.
@@ -35,8 +36,8 @@ authRouter.post('/token', async (request, response, next) => {
     { ttl: MAXIMUM_SESSION_DURATION }
   );
 
-  // Assign the generated identity to the token.
-  token.identity = username;
+  // Associate this token with the user from the request.
+  token.identity = userId;
 
   // Grant the access token Twilio Video capabilities.
   const grant = new VideoGrant({ room: roomSid });
@@ -44,7 +45,7 @@ authRouter.post('/token', async (request, response, next) => {
 
   // Serialize the token to a JWT and include it in the JSON response.
   return response.status(200).send({
-    username: username,
+    userId: userId,
     roomSid: roomSid,
     token: token.toJwt(),
   });
