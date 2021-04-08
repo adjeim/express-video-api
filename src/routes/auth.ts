@@ -1,6 +1,5 @@
-
-import config from '../config';
 import { Router } from 'express';
+import config from '../config';
 import twilio from 'twilio';
 
 const authRouter = Router();
@@ -8,7 +7,7 @@ const authRouter = Router();
 const AccessToken = twilio.jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
 
-// Maximum number of seconds that a participant is allowed to be in a video room (4 hours)
+// Maximum number of seconds that a participant's video room session can last (4 hours)
 const MAXIMUM_SESSION_DURATION = 14400;
 
 /**
@@ -18,7 +17,6 @@ authRouter.post('/token', async (request, response, next) => {
 
   // Get the userId and roomName from the request.
   const userId: string  = request.body.userId;
-  console.log(request.body)
   const roomSid: string = request.body.roomSid;
 
   // Handle case where environment variables could be missing.
