@@ -1,6 +1,5 @@
-import config from '../config';
 import { Router } from 'express';
-import twilio from 'twilio';
+import { twilioClient } from '../index';
 
 interface Room {
   name: string;
@@ -8,8 +7,6 @@ interface Room {
 }
 
 const roomsRouter = Router();
-const twilioClient = twilio(config.TWILIO_ACCOUNT_SID, config.TWILIO_AUTH_TOKEN);
-
 
 /**
  * Create a new video room
@@ -53,7 +50,10 @@ roomsRouter.get('/', async (request, response, next) => {
 
     // If there are no in-progress rooms, return a response that no active rooms were found.
     if (!rooms.length) {
-      return response.status(200).send({message: 'No active rooms found'});
+      return response.status(200).send({
+        message: 'No active rooms found',
+        activeRooms: [],
+      });
     }
 
     // If there are active rooms, create a new array of `Room` objects that will hold this list.
